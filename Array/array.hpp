@@ -14,6 +14,8 @@
 #include <stdint.h> // C ints
 #include <array>
 #include <iostream> // C++ IO
+#include "exceptions.hpp"
+
 
 // NOTE: I realize C does not support the use of classes to encapsulate data and their related functions; however since this is a DSA review
 // I have defined IS_CPP macro to test out allocating memory on heap via new for cpp and via malloc for C.  Additionally, I realize malloc does
@@ -43,11 +45,11 @@ public:
     Array(uint32_t size); // Determine size
     Array(uint32_t * arr, uint32_t size, uint32_t length);
     void displayArray(void);
-    bool append(uint32_t value);  // also add
-    bool insert(uint32_t i, uint32_t value);
-    bool search(uint32_t value, uint32_t &index, searchmethod_e searchMethod);
-    bool get(uint32_t index, uint32_t &value);
-    bool del(uint32_t index);
+    void append(uint32_t value);  // also add
+    void insert(uint32_t i, uint32_t value);
+    uint32_t search(uint32_t value, searchmethod_e searchMethod);
+    uint32_t get(uint32_t index);
+    void del(uint32_t index);
     ~Array(void); // Destructor to delete dynamically allocated memory (i.e. memory allocated on the heap)
 };
 
@@ -125,29 +127,24 @@ void Array::displayArray(void) {
  uint32_t size;  // Total size of memory allocated
  uint32_t length;  // Number of elements stored in the array
  */
-bool Array::append(uint32_t value) {
+void Array::append(uint32_t value) {
     if (this->length == this->size) { // Array is full
-        _error((std::string)"Array is full!");
-        return false;
+        throw ArrayException("Array is full!");
     }
     this->A[this->length] = value;
     this->length++;
-    return true; // Append was successful
 }
 
-bool Array::insert(uint32_t i, uint32_t value) {
+void Array::insert(uint32_t i, uint32_t value) {
     if (i > this->length) {  // Check that we are given a valid index
-        _error((std::string)"Index is invalid");
-        return false;
+        throw ArrayException("Index out of range!");
     }
     if (i == this->length) {  // Check if we are just appending (i.e. inserting at the end)
         this->A[i] = value;
         this->length++;
-        return true;
     }
     if (this->length == this->size) {  // Check if array is full
-        _error((std::string)"Array is full!");
-        return false;
+        throw ArrayException("Array is full!");
     }
     
     // Shift all elements above the index to make space
@@ -156,48 +153,40 @@ bool Array::insert(uint32_t i, uint32_t value) {
     }
     this->A[i] = value; // Update value at index (i.e. perform the insertion)
     this->length++; // Don't forget to update the length
-    return true;
 }
 
-bool Array::search(uint32_t value, uint32_t &index, searchmethod_e searchMethod) {
+uint32_t Array::search(uint32_t value, searchmethod_e searchMethod) {
     for (int i = 0; i < this->length; ++i) {
         if (this->A[i] == value) { // Value found!
-            index = i;
             switch(searchMethod) {
-                case linearSearch:
-                    return true;
                 case frequencySearch:
                     this->swap(i, i-1);
-                    return true;
                 case swapToBeginSearch:
                     this->swap(i, 0);
-                    return true;
+                case linearSearch:
             }
+            return i;
         }
     }
-    return false; // If we got to hear, no value was found
+    throw ArrayException("Value does not exist!");
 }
 
-bool Array::get(uint32_t index, uint32_t &value) {
+uint32_t Array::get(uint32_t index) {
     if (index >= this->length) {
-        // throw exception
-        return false;
+        throw ArrayException("Index out of range!");
     }
-    value = this->A[index];
-    return true;
+    return this->A[index];
 }
 
-bool Array::del(uint32_t index) {
+void Array::del(uint32_t index) {
     if (index >= this->length) {
-        // throw exception
-        return false;
+        throw ArrayException("Index out of range!");
     }
     for (int i = index; i < this->length-1; i++) {
         this->A[i] = this->A[i+1];
     }
     this->A[this->length-1] = 0;
     this->length--;
-    return true;
 }
 
 #endif /* array_hpp */
