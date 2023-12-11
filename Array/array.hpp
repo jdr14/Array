@@ -22,6 +22,13 @@
 #define IS_CPP (1)
 #define DEFAULT_ARRAY_SIZE (10)
 
+enum searchmethod_e
+{
+    linearSearch = 0,
+    frequencySearch = 1,
+    swapToBeginSearch = 2,
+};
+
 class Array
 {
 private:
@@ -36,13 +43,11 @@ public:
     Array(uint32_t size); // Determine size
     Array(uint32_t * arr, uint32_t size, uint32_t length);
     void displayArray(void);
-    bool append(uint32_t value);
+    bool append(uint32_t value);  // also add
     bool insert(uint32_t i, uint32_t value);
-    bool linearSearch(uint32_t value, uint32_t &index);
-    bool modifiedLinearSearch(uint32_t value, uint32_t &index, bool moveToBegin);
-    bool linearSearchByIndex(uint32_t index, uint32_t &value);
-    bool deleteByValue(uint32_t value);
-    bool deleteByIndex(uint32_t index);
+    bool search(uint32_t value, uint32_t &index, searchmethod_e searchMethod);
+    bool get(uint32_t index, uint32_t &value);
+    bool del(uint32_t index);
     ~Array(void); // Destructor to delete dynamically allocated memory (i.e. memory allocated on the heap)
 };
 
@@ -61,18 +66,6 @@ void Array::freeMemory(uint32_t *p) {
     free(p); // Dynamically allocate buffer on heap (C)
 #endif // IS_CPP
 }
-
-//static void _print(char * msg, bool endline) {
-//#if IS_CPP
-//    std::cout << msg;
-//    if (endline)
-//        std::cout << std::endl;
-//#else // IS_CPP
-//    printf("\n%s", msg);
-//    if (endline)
-//        printf("\n");
-//#endif // IS_CPP
-//}
 
 bool Array::swap(uint32_t index1, uint32_t index2) {
     if (index1 < this->length && index2 < this->length) {
@@ -116,14 +109,6 @@ Array::~Array(void) {
 }
 
 void Array::displayArray(void) {
-//    char index[20];
-//    char buf[50];
-//    snprintf(buf, 50, "Array of size %d and %d elements:", this->size, this->length);
-//    _print(buf, true);
-//    for (uint32_t i = 0; i < this->length; i++) {
-//        snprintf(index, sizeof(index), "%d, ", this->A[i]);
-//        _print(index, false);
-//    }
     printf("\nFibonacci Sequence:");
     std::cout << std::endl << "{";
     for (uint32_t i = 0; i < this->length; i++) {
@@ -174,44 +159,45 @@ bool Array::insert(uint32_t i, uint32_t value) {
     return true;
 }
 
-bool Array::linearSearch(uint32_t value, uint32_t &index) {
+bool Array::search(uint32_t value, uint32_t &index, searchmethod_e searchMethod) {
     for (int i = 0; i < this->length; ++i) {
-        if (this->A[i] == value) {
+        if (this->A[i] == value) { // Value found!
             index = i;
-            return true; // Index found
-        }
-    }
-    return false;
-}
-
-bool Array::modifiedLinearSearch(uint32_t value, uint32_t &index, bool moveToBegin) {
-    for (int i = 0; i < this->length; ++i) {
-        if (this->A[i] == value) {
-            index = i;
-            if (i > 0) {
-                if (moveToBegin) {
+            switch(searchMethod) {
+                case linearSearch:
+                    return true;
+                case frequencySearch:
+                    this->swap(i, i-1);
+                    return true;
+                case swapToBeginSearch:
                     this->swap(i, 0);
-                }
-                else {
-                    this->swap(i, i-1); // With each search
-                }
+                    return true;
             }
-            return true; // Index found
         }
     }
-    _error((std::string)"Failed to find the value");
-    return false; // We failed the search if nothing is returned
+    return false; // If we got to hear, no value was found
 }
 
-bool Array::linearSearchByIndex(uint32_t index, uint32_t &value) {
+bool Array::get(uint32_t index, uint32_t &value) {
     if (index >= this->length) {
         // throw exception
         return false;
     }
+    value = this->A[index];
     return true;
 }
 
-bool deleteByValue(uint32_t value);
-bool deleteByIndex(uint32_t index);
+bool Array::del(uint32_t index) {
+    if (index >= this->length) {
+        // throw exception
+        return false;
+    }
+    for (int i = index; i < this->length-1; i++) {
+        this->A[i] = this->A[i+1];
+    }
+    this->A[this->length-1] = 0;
+    this->length--;
+    return true;
+}
 
 #endif /* array_hpp */
