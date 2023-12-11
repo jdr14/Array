@@ -40,7 +40,18 @@ uint32_t iterativeFib(uint32_t i) {
     return sum;
 }
 
+uint32_t recursiveFactorial(uint32_t i) {
+    return (i == 0) ? 1: i * recursiveFactorial(i - 1);
+}
 
+uint32_t iterativeFactorial(uint32_t i) {
+    uint32_t fact = 1;
+    while (i > 0) {
+        fact *= i;
+        i--;
+    }
+    return fact;
+}
 
 double timeFunction(uint32_t (*func)(uint32_t *, uint32_t), uint32_t param, uint32_t m[]) {
     static clock_t time;

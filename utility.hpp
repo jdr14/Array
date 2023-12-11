@@ -23,6 +23,10 @@ uint32_t recursiveFib(uint32_t *mem, uint32_t i);
 uint32_t recursiveFibMemorization(uint32_t * mem, uint32_t i);
 uint32_t iterativeFib(uint32_t i);
 
+// Factorial calculation functions
+uint32_t recursiveFactorial(uint32_t i);
+uint32_t iterativeFactorial(uint32_t i);
+
 double timeFunction(uint32_t (*func)(uint32_t *, uint32_t), uint32_t param, uint32_t m[]);
 void initializeMemorizationArray(uint32_t mem[], uint32_t size);
 void fillArrayWithFibNumbers(uint32_t *arr, uint32_t size);
