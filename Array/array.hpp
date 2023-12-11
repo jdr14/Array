@@ -24,11 +24,15 @@
 #define IS_CPP (1)
 #define DEFAULT_ARRAY_SIZE (10)
 
-enum searchmethod_e
-{
+enum searchmethod_e {
     linearSearch = 0,
     frequencySearch = 1,
     swapToBeginSearch = 2,
+};
+
+enum shiftDirection_e {
+    right,
+    left,
 };
 
 class Array
@@ -40,6 +44,7 @@ private:
     uint32_t * allocateMemory(uint32_t size);
     void freeMemory(uint32_t *p);
     bool swap(uint32_t index1, uint32_t index2);
+    uint32_t shift(shiftDirection_e direction);
 public:
     Array(void); // This can dynamically allocate memory for a fixed size
     Array(uint32_t size); // Determine size
@@ -55,6 +60,12 @@ public:
     void set(uint32_t index, uint32_t value);
     uint32_t max(void);
     uint32_t sum(void);
+    
+    void reverse(void); // Reverse the array elements using the same block of memory allocated for the array
+    void leftShift(void);
+    void leftRotate(void);
+    void rightShift(void);
+    void rightRotate(void);
     
     void append(uint32_t value);  // also add
     void insert(uint32_t i, uint32_t value);
@@ -91,6 +102,34 @@ bool Array::swap(uint32_t index1, uint32_t index2) {
         return true;
     }
     return false;
+}
+
+uint32_t Array::shift(shiftDirection_e direction) {
+    if (this->length == 0) { // Nothing in the array
+        return 0;
+    }
+    uint32_t saveValue = 0;
+    switch(direction) {
+        case right:
+            saveValue = this->A[this->length - 1];
+            for (uint32_t i = 0; i < this->length-1; ++i) {
+                this->A[i+1] = this->A[i];
+            }
+            // Set the empty value to 0 as a default value, We could modify the implementation of this as needed
+            this->A[0] = 0;
+            break;
+        case left:
+            saveValue = this->A[0];
+            for (uint32_t i = this->length-1; i > 0; --i) {
+                this->A[i] = this-> A[i -1];
+            }
+            // Set the empty value to 0 as a default value, We could modify the implementation of this as needed
+            this->A[this->length-1] = 0;
+            break;
+        default:
+            break;
+    }
+    return saveValue;
 }
 
 Array::Array(void) {
@@ -166,6 +205,31 @@ uint32_t Array::sum(void) {
         sum += this->A[i];
     }
     return sum;
+}
+
+void Array::reverse(void) {
+    uint32_t temp;
+    for (uint32_t i = 0; i < (this->length / 2); ++i) {
+        temp = this->A[i];
+        this->A[i] = this->A[this->length - 1 - i];
+        this->A[this->length - 1 - i] = temp;
+    }
+}
+
+void Array::leftShift(void) {
+    this->shift(left);
+}
+
+void Array::leftRotate(void) {
+    this->shift(right);
+}
+
+void Array::rightShift(void) {
+    this->A[0] = this->shift(right);
+}
+
+void Array::rightRotate(void) {
+    this->A[this->length - 1] = this->shift(left);
 }
 
 void Array::append(uint32_t value) {
