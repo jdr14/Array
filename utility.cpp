@@ -24,17 +24,23 @@ uint32_t recursiveFibMemorization(uint32_t * mem, uint32_t i) {
     }
     return mem[i];
 }
-//int iterativeFib(int i) {
-//    if (i <= 1) {
-//        return i;
-//    }
-//    int s = 0;
-//    int t0 =
-//    for (int j = 2; j <= i; j++) {
-//        s += (2 * j) - 3;
-//    }
-//    return s;
-//}
+// Given a specific index, calculate the fibonnaci value for that index of the fib. seq.
+uint32_t iterativeFib(uint32_t i) {
+    if (i <= 1) {
+        return i;
+    }
+    uint32_t sum = 0;
+    uint32_t t0 = 0;
+    uint32_t t1 = 1;
+    for (uint32_t j = 2; j <= i; j++) {
+        sum = (t0 + t1);
+        t0 = t1;
+        t1 = sum;
+    }
+    return sum;
+}
+
+
 
 double timeFunction(uint32_t (*func)(uint32_t *, uint32_t), uint32_t param, uint32_t m[]) {
     static clock_t time;
