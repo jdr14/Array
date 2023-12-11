@@ -93,7 +93,7 @@ static void testAppendAndGet(void) {
         assert(0 == 1); // Should not get here if we are throwing the exception
     }
     catch (ArrayException err) {
-        std::cout << "\tException caught - " << err.what() << std::endl;
+        std::cout << "\t\tException caught - " << err.what() << std::endl;
     }
     std::cout << "\tPassed: append(value)" << std::endl;
     
@@ -105,13 +105,13 @@ static void testAppendAndGet(void) {
         a.get(-1);
     }
     catch (ArrayException err) {
-        std::cout << "\tException caught - " << err.what() << std::endl;
+        std::cout << "\t\tException caught - " << err.what() << std::endl;
     }
     try {
         a.get(12);
     }
     catch (ArrayException err) {
-        std::cout << "\tException caught - " << err.what() << std::endl;
+        std::cout << "\t\tException caught - " << err.what() << std::endl;
     }
     std::cout << "\tPassed: get(index)" << std::endl;
 }

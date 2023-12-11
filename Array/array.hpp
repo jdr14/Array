@@ -50,6 +50,8 @@ public:
     void append(uint32_t value);  // also add
     void insert(uint32_t i, uint32_t value);
     uint32_t search(uint32_t value, searchmethod_e searchMethod);
+    uint32_t iterativeBinarySearch(uint32_t key);
+    uint32_t binarySearchRecursive(uint32_t low, uint32_t high, uint32_t key);
     uint32_t get(uint32_t index);
     void del(uint32_t index);
     ~Array(void); // Destructor to delete dynamically allocated memory (i.e. memory allocated on the heap)
@@ -167,6 +169,40 @@ uint32_t Array::search(uint32_t value, searchmethod_e searchMethod) {
         }
     }
     throw ArrayException("Value does not exist!");
+}
+
+uint32_t Array::iterativeBinarySearch(uint32_t key) {
+    uint32_t low, mid, high;
+    low =  0;
+    high = this->length;
+    while (low < high) {
+        mid = (low + high) / 2;
+        if (this->A[mid] == key) { // We found the value!
+            return mid;
+        }
+        // If in higher half, update low to be 1 greater than the mid that was just checked
+        if (key > this->A[mid]) {
+            low = mid + 1;
+        }
+        // If in lower half, update the high to be 1 less than the mid that was just checked
+        if (key < this->A[mid]) {
+            high = mid - 1;
+        }
+    }
+    throw ArrayException("Value not found!");
+}
+
+uint32_t Array::binarySearchRecursive(uint32_t low, uint32_t high, uint32_t key) {
+    static uint32_t mid = (low + high) / 2;
+    if (this->A[mid] == key) { // found
+        return mid;
+    }
+    if (key > this->A[mid]) {
+        return binarySearchRecursive(mid + 1, high, key);
+    }
+    else {
+        return binarySearchRecursive(low, mid - 1, key);
+    }
 }
 
 uint32_t Array::get(uint32_t index) {
