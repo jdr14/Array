@@ -44,17 +44,25 @@ public:
     Array(void); // This can dynamically allocate memory for a fixed size
     Array(uint32_t size); // Determine size
     Array(uint32_t * arr, uint32_t size, uint32_t length);
+    ~Array(void); // Destructor to delete dynamically allocated memory (i.e. memory allocated on the heap)
+    
     uint32_t getSize(void);
     uint32_t getLength(void);
+    
     void displayArray(void);
+    
+    uint32_t get(uint32_t index);
+    void set(uint32_t index, uint32_t value);
+    uint32_t max(void);
+    uint32_t sum(void);
+    
     void append(uint32_t value);  // also add
     void insert(uint32_t i, uint32_t value);
+    void del(uint32_t index);
+    
     uint32_t search(uint32_t value, searchmethod_e searchMethod);
     uint32_t iterativeBinarySearch(uint32_t key);
     uint32_t binarySearchRecursive(uint32_t low, uint32_t high, uint32_t key);
-    uint32_t get(uint32_t index);
-    void del(uint32_t index);
-    ~Array(void); // Destructor to delete dynamically allocated memory (i.e. memory allocated on the heap)
 };
 
 uint32_t * Array::allocateMemory(uint32_t size) {
@@ -125,6 +133,39 @@ void Array::displayArray(void) {
         else
             std::cout << ", ";
     }
+}
+
+uint32_t Array::get(uint32_t index) {
+    if (index >= this->length) {
+        throw ArrayException("Index out of range!");
+    }
+    return this->A[index];
+}
+
+void Array::set(uint32_t index, uint32_t value) {
+    if (index >= this->length) {
+        throw ArrayException("Index out of range!");
+    }
+    this->A[index] = value;
+}
+
+uint32_t Array::max(void) {
+    uint32_t max = 0;
+    // Assume we are calculating the max of an unsorted array
+    for (uint32_t i = 0; i < this->length; ++i) {
+        if (this->A[i] > max) {
+            max = this->A[i];
+        }
+    }
+    return max;
+}
+
+uint32_t Array::sum(void) {
+    uint32_t sum = 0;
+    for (uint32_t i = 0; i < this->length; ++i) {
+        sum += this->A[i];
+    }
+    return sum;
 }
 
 void Array::append(uint32_t value) {
@@ -203,13 +244,6 @@ uint32_t Array::binarySearchRecursive(uint32_t low, uint32_t high, uint32_t key)
     else {
         return binarySearchRecursive(low, mid - 1, key);
     }
-}
-
-uint32_t Array::get(uint32_t index) {
-    if (index >= this->length) {
-        throw ArrayException("Index out of range!");
-    }
-    return this->A[index];
 }
 
 void Array::del(uint32_t index) {
