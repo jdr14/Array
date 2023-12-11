@@ -6,3 +6,9 @@
 //
 
 #include "exceptions.hpp"
+
+ArrayException::ArrayException(char *msg) : message(msg) {}
+
+char * ArrayException::what() {
+    return message;
+}

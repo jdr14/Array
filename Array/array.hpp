@@ -44,6 +44,8 @@ public:
     Array(void); // This can dynamically allocate memory for a fixed size
     Array(uint32_t size); // Determine size
     Array(uint32_t * arr, uint32_t size, uint32_t length);
+    uint32_t getSize(void);
+    uint32_t getLength(void);
     void displayArray(void);
     void append(uint32_t value);  // also add
     void insert(uint32_t i, uint32_t value);
@@ -64,8 +66,10 @@ uint32_t * Array::allocateMemory(uint32_t size) {
 void Array::freeMemory(uint32_t *p) {
 #if IS_CPP
     delete []p; // Dynamically allocate buffer on heap (C++)
+    p = nullptr;
 #else // IS_CPP
     free(p); // Dynamically allocate buffer on heap (C)
+    p = NULL;
 #endif // IS_CPP
 }
 
@@ -77,10 +81,6 @@ bool Array::swap(uint32_t index1, uint32_t index2) {
         return true;
     }
     return false;
-}
-
-void _error(std::string err_str) {
-    std::cout << "Error: " << err_str << std::endl;
 }
 
 Array::Array(void) {
@@ -106,27 +106,25 @@ Array::Array(uint32_t * arr, uint32_t size, uint32_t numElements) {
     }
 }
 
-Array::~Array(void) {
-    freeMemory(this->A);
+uint32_t Array::getSize(void) {
+    return this->size;
+}
+
+uint32_t Array::getLength(void) {
+    return this->length;
 }
 
 void Array::displayArray(void) {
-    printf("\nFibonacci Sequence:");
-    std::cout << std::endl << "{";
+    std::cout << "{";
     for (uint32_t i = 0; i < this->length; i++) {
         std::cout << *(this->A + i);
         if (i == this->length-1)
-            std::cout << "}\n" << std::endl;
+            std::cout << "}" << std::endl;
         else
             std::cout << ", ";
     }
 }
 
-/*
- uint32_t *A;  // Dynamically Allocated array
- uint32_t size;  // Total size of memory allocated
- uint32_t length;  // Number of elements stored in the array
- */
 void Array::append(uint32_t value) {
     if (this->length == this->size) { // Array is full
         throw ArrayException("Array is full!");
@@ -187,6 +185,14 @@ void Array::del(uint32_t index) {
     }
     this->A[this->length-1] = 0;
     this->length--;
+}
+
+/*
+ Destructor to free dynamically allocated memory (on the heap when the object is destroyed)
+ This is automatically invoked when the caller goes out of scope.
+ */
+Array::~Array(void) {
+    freeMemory(this->A);
 }
 
 #endif /* array_hpp */
