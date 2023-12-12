@@ -14,14 +14,21 @@
 #define ENABLE_TIME_TEST (0)
 #define ENABLE_FIB_TEST  (0)
 
+// Test functions for Array functionality
 void testConstructors(void);
 void testDisplayArray(void);
 static void testAppendAndGet(void);
 
+// Test functions for Array sorting techniques
+void fillArrayWithRandomNumbers(Array *arr, uint32_t size, uint32_t low, uint32_t high);
+void testGenericSortMethod(void (Array::*pFunc)(void));
+void testBubbleSort(void);
+void testInsertionSort(void);
+
 int main(int argc, const char * argv[]) {
     
 #if ENABLE_TIME_TEST
-    timeTest();
+    timeFib();
 #endif // ENABLE_TIME_TEST
     
 #if ENABLE_FIB_TEST
@@ -32,6 +39,9 @@ int main(int argc, const char * argv[]) {
     testConstructors();
     testDisplayArray();
     testAppendAndGet();
+    
+    testBubbleSort();
+    testInsertionSort();
     
     return 0;
 }
@@ -114,4 +124,48 @@ static void testAppendAndGet(void) {
         std::cout << "\t\tException caught - " << err.what() << std::endl;
     }
     std::cout << "\tPassed: get(index)" << std::endl;
+}
+
+/*
+ This function will be responsible for helping to fill an array of a given size "size"
+ with random numbers between the ranges of the given "low" and "high" numbers
+ */
+void fillArrayWithRandomNumbers(Array *arr, uint32_t low, uint32_t high) {
+    for (uint32_t i = 0; i < arr->getSize(); ++i) {
+        // Append random numbers in the range of (low - high)
+        arr->append( boundedRandomNumberGenerator(i, low, high) );
+    }
+}
+
+void testGenericSortMethod(void (Array::*pFunc)(void)) {
+    uint32_t size = 50000;
+    Array a(size);
+    fillArrayWithRandomNumbers(&a, 0, 1000);
+//    a.displayArray();
+    // Pass the pointer and address of Array object 'a' to calculate the time it takes to sort
+    double timeTaken = timeVoidFunction(&a, pFunc);
+    
+    // Will return false and assert if the array is not sorted in ascending order
+//    a.displayArray();
+    assert(a.isSorted());
+    
+    std::cout << "\t\tArray is sorted!  Took " << timeTaken << " to sort an array of size " << size << std::endl;
+}
+
+void testBubbleSort(void) {
+    std::cout << "\nTesting bubbleSort():" << std::endl;
+    
+    // Get a pointer to the address of a member function of class Array
+    // in this case, the bubbleSort method
+    testGenericSortMethod(&Array::bubbleSort);
+    std::cout << "\tPassed: bubbleSort()" << std::endl;
+}
+
+void testInsertionSort(void) {
+    std::cout << "\nTesting insertionSort():" << std::endl;
+    
+    // Get a pointer to the address of a member function of class Array
+    // in this case, the bubbleSort method
+    testGenericSortMethod(&Array::insertionSort);
+    std::cout << "\tPassed: insertionSort()" << std::endl;
 }

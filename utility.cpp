@@ -53,8 +53,27 @@ uint32_t iterativeFactorial(uint32_t i) {
     return fact;
 }
 
-double timeFunction(uint32_t (*func)(uint32_t *, uint32_t), uint32_t param, uint32_t m[]) {
-    static clock_t time;
+uint32_t boundedRandomNumberGenerator(uint32_t seed, uint32_t low, uint32_t high) {
+    // Provide a seed value
+    srand( (unsigned)clock() * seed );
+
+    // Calculate and return a random number between low and high value
+    uint32_t delta = high - low;
+    return low + (rand() % delta);
+}
+
+double timeVoidFunction(Array *arr, void (Array::*func)(void)) {
+    if (func == nullptr)
+        return -1;
+    
+    clock_t time = clock();
+    (arr->*func)();
+//    (Array::*func)();
+    return ((double)clock() - time) / CLOCKS_PER_SEC;
+};
+
+double timeFib(uint32_t (*func)(uint32_t *, uint32_t), uint32_t param, uint32_t m[]) {
+    clock_t time;
     
     if (m == nullptr) {
         time = clock();
@@ -101,8 +120,8 @@ void timeTest(void) {
     double delta1, delta2;
     printf("\nElapsed time in seconds for both methods of fibonnaci recursion\n");
     for (uint32_t i = 0; i < RECURSION_LIMIT; i++) {
-        delta1 = timeFunction(func1, i, nullptr);
-        delta2 = timeFunction(func2, i, memBuf);
+        delta1 = timeFib(func1, i, nullptr);
+        delta2 = timeFib(func2, i, memBuf);
         printf("(%d)  %f  |  %f\n", i, delta1, delta2);
     }
     
