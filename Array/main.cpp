@@ -32,7 +32,7 @@ int main(int argc, const char * argv[]) {
     testConstructors();
     testDisplayArray();
     testAppendAndGet();
-        
+    
     return 0;
 }
 

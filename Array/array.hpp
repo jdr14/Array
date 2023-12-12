@@ -67,6 +67,10 @@ public:
     void rightShift(void);
     void rightRotate(void);
     
+    // Sorting techniques
+    void bubbleSort(void);
+    void insertionSort(void);
+    
     void append(uint32_t value);  // also add
     void insert(uint32_t i, uint32_t value);
     void del(uint32_t index);
@@ -75,6 +79,33 @@ public:
     uint32_t iterativeBinarySearch(uint32_t key);
     uint32_t binarySearchRecursive(uint32_t low, uint32_t high, uint32_t key);
 };
+
+void Array::bubbleSort(void) {
+    if (this->length == 0) {
+        return;  // we need this check because it is uint32_t
+    }
+    for (int i = 0; i < this->length - 1; ++i) {
+        if (this->A[i] > this->A[i+1]) {
+            this->swap(i, i+1);
+        }
+    }
+}
+
+void Array::insertionSort(void) {
+    if (this->length <= 1) {
+        return;  // array of size 1 is already sorted
+    }
+    for (uint32_t i = 1; i < this->length; ++i) {
+        for (uint32_t j = i - 1; j >= 0; --j) {
+            // We want to use >= instead of < in this case to prevent excessive and unnecessary swapping
+            // We want to check for N times and swap only once.
+            if (this->A[i] >= this->A[j]) {
+                continue;
+            }
+            this->swap(this->A[i], this->A[j]);
+        }
+    }
+}
 
 uint32_t * Array::allocateMemory(uint32_t size) {
 #if IS_CPP
