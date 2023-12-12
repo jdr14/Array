@@ -55,8 +55,54 @@ void Array::insertionSort(void) {
     }
 }
 
+/*
+ Start at i = 0; (where smallest number should be) then find the smallest number and
+ put it there.  On 2nd pass, i = 1, put the 2nd smallest number there, etc...
+ */
 void Array::selectionSort(void) {
+    uint32_t i, curr_smallest, curr_node;
+    for (i = 0; i < this->length; i++) {
+        curr_smallest = curr_node = i;
+        for (; curr_node < this->length; curr_node++) {
+            if (this->A[curr_node] < this->A[curr_smallest]) {
+                curr_smallest = curr_node; // update smallest index
+            }
+        }
+        // Update index i to the smallest value found thereafter by swapping
+        this->swap(i, curr_smallest);
+    }
+}
+
+uint32_t Array::quickSortPartition(/* int A[], */ uint32_t low, uint32_t high) {
+    uint32_t pivot = this->A[low];
+    uint32_t i = low, j = high;
     
+    do {
+        do {i++;} while(this->A[i] <= pivot && i < UINT32_MAX);
+        do {j--;} while(this->A[j] > pivot && j < UINT32_MAX);
+        if (i < j) {
+            this->swap(i, j);
+        }
+    } while (i < j);
+    
+    this->swap(low, j);
+    return j; // return the partition
+}
+
+void Array::quickSort(uint32_t low, uint32_t high) {
+    uint32_t partition;
+    if (low < high) {
+        partition = this->quickSortPartition(low, high);
+        // Partition acts as upper bound here for lower half quicksort()
+        this->quickSort(low, partition);
+        this->quickSort(partition + 1, high);
+    }
+}
+
+void Array::quickSortVoidHandle(void) {
+//    this->append(UINT32_MAX-1);
+    this->quickSort(0, this->length-1);
+//    this->del(this->length-1);
 }
 
 uint32_t * Array::allocateMemory(uint32_t size) {

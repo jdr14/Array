@@ -13,6 +13,7 @@
 
 #define ENABLE_TIME_TEST (0)
 #define ENABLE_FIB_TEST  (0)
+#define ENABLE_SORT_DEBUG (0)
 
 // Test functions for Array functionality
 void testConstructors(void);
@@ -24,6 +25,7 @@ void fillArrayWithRandomNumbers(Array *arr, uint32_t size, uint32_t low, uint32_
 void testGenericSortMethod(void (Array::*pFunc)(void));
 void testBubbleSort(void);
 void testInsertionSort(void);
+void testSelectionSort(void);
 
 int main(int argc, const char * argv[]) {
     
@@ -42,6 +44,7 @@ int main(int argc, const char * argv[]) {
     
     testBubbleSort();
     testInsertionSort();
+    testSelectionSort();
     
     return 0;
 }
@@ -138,16 +141,27 @@ void fillArrayWithRandomNumbers(Array *arr, uint32_t low, uint32_t high) {
 }
 
 void testGenericSortMethod(void (Array::*pFunc)(void)) {
-    uint32_t size = 50000;
+    uint32_t size;
+#if ENABLE_SORT_DEBUG
+    size = 5;
+#else // ENABLE_SORT_DEBUG
+    size = 50000;
+#endif // ENABLE_SORT_DEBUG
+    
     Array a(size);
     fillArrayWithRandomNumbers(&a, 0, 1000);
-//    a.displayArray();
+#if ENABLE_SORT_DEBUG
+    a.displayArray();
+#endif // ENABLE_SORT_DEBUG
     // Pass the pointer and address of Array object 'a' to calculate the time it takes to sort
     double timeTaken = timeVoidFunction(&a, pFunc);
     
     // Will return false and assert if the array is not sorted in ascending order
-//    a.displayArray();
+#if ENABLE_SORT_DEBUG
+    a.displayArray();
+#else // ENABLE_SORT_DEBUG
     assert(a.isSorted());
+#endif // ENABLE_SORT_DEBUG
     
     std::cout << "\t\tArray is sorted!  Took " << timeTaken << " to sort an array of size " << size << std::endl;
 }
@@ -163,9 +177,12 @@ void testBubbleSort(void) {
 
 void testInsertionSort(void) {
     std::cout << "\nTesting insertionSort():" << std::endl;
-    
-    // Get a pointer to the address of a member function of class Array
-    // in this case, the bubbleSort method
     testGenericSortMethod(&Array::insertionSort);
     std::cout << "\tPassed: insertionSort()" << std::endl;
+}
+
+void testSelectionSort(void) {
+    std::cout << "\nTesting selectionSort():" << std::endl;
+    testGenericSortMethod(&Array::selectionSort);
+    std::cout << "\tPassed: selectionSort()" << std::endl;
 }
